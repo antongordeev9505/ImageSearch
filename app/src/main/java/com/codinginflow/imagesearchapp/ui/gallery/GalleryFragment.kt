@@ -5,8 +5,10 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.paging.LoadState
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.databinding.FragmentGalleryBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,12 +41,18 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
+            //just put it here to turn off animation in RV
+            //it`s ok till we change our items
+            recyclerView.itemAnimator = null
             //concatinate 2 adapters
             recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
                 //declare that we have to forward retry function
                 header = UnsplashPhotoLoadStateAdapter{ adapter.retry() }, //retry functionality - retry load of another page
-                footer = UnsplashPhotoLoadStateAdapter{ adapter.retry() }
+                footer = UnsplashPhotoLoadStateAdapter{ adapter.retry() },
             )
+            retryButton.setOnClickListener {
+                adapter.retry()
+            }
         }
 
         //viewLifecycleOwner - lifecycle of fragments view
@@ -54,6 +62,31 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
         viewModel.photos.observe(viewLifecycleOwner) {
             //use lificycle of the Fragment`s view - ussualy we need it
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
+
+        }
+
+        //show us the loadState (refresh data set)
+        adapter.addLoadStateListener { loadState ->
+            binding.apply {
+                //when the list is refreshing with new data set
+                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                //loading is finished and the state is not error
+                recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
+                //if there is not internet connection
+                retryButton.isVisible = loadState.source.refresh is LoadState.Error
+                textViewError.isVisible = loadState.source.refresh is LoadState.Error
+
+                //empty view
+                if (loadState.source.refresh is LoadState.NotLoading &&
+                    //if there si not more date to load
+                        loadState.append.endOfPaginationReached &&
+                        adapter.itemCount < 1) {
+                    recyclerView.isVisible = false
+                    textViewEmpty.isVisible = true
+                } else {
+                    textViewEmpty.isVisible = false
+                }
+            }
 
         }
 
