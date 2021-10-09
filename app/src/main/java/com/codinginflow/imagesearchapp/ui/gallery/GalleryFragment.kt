@@ -8,8 +8,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.codinginflow.imagesearchapp.R
+import com.codinginflow.imagesearchapp.data.UnsplashPhoto
 import com.codinginflow.imagesearchapp.databinding.FragmentGalleryBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 //this annot will inject VM here
 @AndroidEntryPoint
 //inflate layout here in constructor
-class GalleryFragment: Fragment(R.layout.fragment_gallery){
+class GalleryFragment: Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter.OnItemClickListener{
 
     //viewmodel is injected by dagger
     private val viewModel by viewModels<GalleryViewModel>()
@@ -37,7 +39,8 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
         //instanciate bindng object
         _binding = FragmentGalleryBinding.bind(view)
 
-        val adapter = UnsplashPhotoAdapter()
+        //pass the fragment as the listener to the adapter
+        val adapter = UnsplashPhotoAdapter(this)
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -92,6 +95,16 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
 
         //activate menu
         setHasOptionsMenu(true)
+    }
+
+    override fun onItemClick(photo: UnsplashPhoto) {
+        //have to rebuild project to have access to navigation.safeargs which are generated
+        //earlier we declared UnsplashPhoto as the type which we can forward to another fragment
+        //create action
+        //send parameter in compile time safe way
+        //it`s better that put it in bundle cuz bundle isn`t which is not compiletime sage
+        val action = GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo)
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

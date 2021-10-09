@@ -14,7 +14,8 @@ import com.codinginflow.imagesearchapp.databinding.ItemUnsplashPhotoBinding
 
 //pagingadapter knows how to handle paging data - UnsplashPhoto
 //in constructor we put Diffutill Item callback - know how to calculate changes between old and new datasets
-class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+//pass the fragment as the listener to the adapter
+class UnsplashPhotoAdapter(private val listener: OnItemClickListener) : PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding = ItemUnsplashPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,8 +32,27 @@ class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapt
     }
 
     //use viewBinding - let us to access our view in null type safeway
-    class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
+    inner class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) { //inflate item_unsplash_photo layout
+
+        init {
+            //listener
+            //binding.root - whole item
+            //we have to create interface to send click to the fragment cuz we must handle click in Fragment that contains RV
+            //also we can`t handle navigation from the adapter
+            binding.root.setOnClickListener {
+                //adapter position of the item
+                val position = bindingAdapterPosition
+                //NO_POSITION - if the item is animated during our click
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+
+                    if (item != null) {
+                        listener.onItemClick(item)
+                    }
+                }
+            }
+        }
 
             fun bind(photo: UnsplashPhoto) {
                 //bind views from itemview to data
@@ -48,6 +68,11 @@ class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapt
                     textViewUserName.text = photo.user.username
                 }
             }
+    }
+
+    //create interface - advantage: keep adaptor reusable
+    interface OnItemClickListener {
+        fun onItemClick(photo: UnsplashPhoto)
     }
 
     companion object {
