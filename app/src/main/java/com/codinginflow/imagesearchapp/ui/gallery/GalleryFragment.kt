@@ -1,7 +1,10 @@
 package com.codinginflow.imagesearchapp.ui.gallery
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.codinginflow.imagesearchapp.R
@@ -53,6 +56,39 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
 
         }
+
+        //activate menu
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        //activate menu for this fragment
+        inflater.inflate(R.menu.menu_gallery, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        //Callbacks for changes to the query text.
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                //execute search when we press search button
+                if (query != null)  {
+                    binding.recyclerView.scrollToPosition(0) // scroll to the top
+                    viewModel.searchPhotos(query)
+                    //hide the keyboard
+                    searchView.clearFocus()
+                }
+                //we made all logic and return true - we handled submit button
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //execute search while we are typing
+                //don`t use it
+                return true
+            }
+        })
     }
 
     override fun onDestroyView() {

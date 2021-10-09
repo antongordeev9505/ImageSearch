@@ -4,4 +4,5 @@
     <string name="result_could_not_be_load">Result could not be load</string>
     <string name="retry_button">Retry</string>
     <string name="query_is_empty">No results were found for this query</string>
+    <string name="search_icon">Search</string>
 </resources>
