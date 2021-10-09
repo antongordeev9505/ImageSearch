@@ -36,7 +36,12 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery){
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
-            recyclerView.adapter = adapter
+            //concatinate 2 adapters
+            recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+                //declare that we have to forward retry function
+                header = UnsplashPhotoLoadStateAdapter{ adapter.retry() }, //retry functionality - retry load of another page
+                footer = UnsplashPhotoLoadStateAdapter{ adapter.retry() }
+            )
         }
 
         //viewLifecycleOwner - lifecycle of fragments view
