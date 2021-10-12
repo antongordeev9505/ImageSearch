@@ -11,5 +11,10 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
 
+    <item
+        android:id="@+id/list_of_collections"
+        android:icon="@drawable/ic_baseline_supervised_user_circle_24"
+        android:title="Collections"
+        app:showAsAction="ifRoom|collapseActionView"/>
 
 </menu>

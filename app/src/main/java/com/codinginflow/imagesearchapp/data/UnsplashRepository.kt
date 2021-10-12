@@ -28,4 +28,20 @@ class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashAp
         //turn pager to a stream of paging data
         //we will observ it in fragment
         ).liveData
+
+    fun getListOfCollections() =
+        //Pager will use PagerSource to create paging data
+        Pager(
+            //configure loading
+            config = PagingConfig(
+                //number of items loaded at once
+                pageSize = 20,
+                //number of items that may be loaded into PagingData before pages should be dropped
+                maxSize = 100,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { UnsplashPagingSourceCollection(unsplashApi) }
+            //turn pager to a stream of paging data
+            //we will observ it in fragment
+        ).liveData
 }

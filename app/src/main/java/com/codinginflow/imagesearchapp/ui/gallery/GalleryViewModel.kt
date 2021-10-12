@@ -27,6 +27,8 @@ class GalleryViewModel @ViewModelInject constructor(
         repository.getSearchResults(queryString).cachedIn(viewModelScope)
     }
 
+    val collections = repository.getListOfCollections()
+
     //get query from the fragment
     fun searchPhotos(query: String) {
         currentQuery.value = query

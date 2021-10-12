@@ -25,4 +25,11 @@ interface UnsplashApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
     ): UnsplashResponse
+
+    @Headers("Accept-Version: v1", "Authorization: Client-ID $CLIENT_ID")
+    @GET("/collections")
+    suspend fun listOfCollections(
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
+    ): UnsplashCollectionResponse
 }

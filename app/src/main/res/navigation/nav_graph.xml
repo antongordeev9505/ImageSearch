@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_galleryFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
+        <action
+            android:id="@+id/action_galleryFragment_to_listOfCollectionsFragment"
+            app:destination="@id/listOfCollectionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -23,4 +26,9 @@
             android:name="photo"
             app:argType="com.codinginflow.imagesearchapp.data.UnsplashPhoto" />
     </fragment>
+    <fragment
+        android:id="@+id/listOfCollectionsFragment"
+        android:name="com.codinginflow.imagesearchapp.ui.collections.CollectionsFragment"
+        android:label="Collections"
+        tools:layout="@layout/fragment_list_of_collections" />
 </navigation>

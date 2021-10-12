@@ -3,6 +3,7 @@ package com.codinginflow.imagesearchapp.ui.gallery
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -106,6 +107,22 @@ class GalleryFragment: Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter
         val action = GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo)
         findNavController().navigate(action)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.list_of_collections -> {
+                displayListOfCollections()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun displayListOfCollections() {
+//        Toast.makeText(context, "Users", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(GalleryFragmentDirections.actionGalleryFragmentToListOfCollectionsFragment())
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)

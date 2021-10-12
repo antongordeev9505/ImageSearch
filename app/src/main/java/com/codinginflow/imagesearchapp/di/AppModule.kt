@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -19,6 +21,17 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object AppModule {
 
+    @Provides
+    @Singleton
+    fun provideClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            //added interceptor, to intercept on BODY level
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+
+
     //instance of retrofit
     //@Provide - how to create object
     @Provides
@@ -26,6 +39,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit =
         Retrofit.Builder()
+            .client(provideClient())
             .baseUrl(UnsplashApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
