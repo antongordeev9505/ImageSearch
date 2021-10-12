@@ -5,4 +5,5 @@
     <string name="retry_button">Retry</string>
     <string name="query_is_empty">No results were found for this query</string>
     <string name="search_icon">Search</string>
+    <string name="save_image_content_description">Save image</string>
 </resources>

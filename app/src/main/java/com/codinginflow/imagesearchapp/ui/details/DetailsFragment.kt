@@ -1,18 +1,24 @@
 package com.codinginflow.imagesearchapp.ui.details
 
+import android.app.DownloadManager
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import androidx.work.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.codinginflow.imagesearchapp.DownloadImageWorker
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.databinding.FragmentDetailsBinding
 
@@ -60,6 +66,7 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
                         textViewCreator.isVisible = true
                         //cuz descriptions might be null (from Api)
                         textViewDescription.isVisible = photo.description != null
+                        fab.isVisible = true
                         return false //otherwise we won`t see the image
 
                     }
@@ -85,6 +92,33 @@ class DetailsFragment: Fragment(R.layout.fragment_details) {
                 //make the text is underlined
                 paint.isUnderlineText = true
             }
+
+            fab.setOnClickListener {
+                downloadImage(photo.urls.full)
+            }
         }
+    }
+
+    private fun downloadImage(imageUrl: String) {
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .setRequiresStorageNotLow(true)
+            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+            .build()
+
+        val downloadImageWorker = OneTimeWorkRequestBuilder<DownloadImageWorker>()
+            //image - inputdata in worker, we will use it in Worker
+            .setInputData(workDataOf("image_path" to imageUrl))
+            .setConstraints(constraints)
+            .build()
+
+        val workManager = WorkManager.getInstance(requireContext())
+        workManager.enqueue(downloadImageWorker)
+
+        workManager.getWorkInfoByIdLiveData(downloadImageWorker.id).observe(viewLifecycleOwner, { info->
+            if (info.state.isFinished) {
+                Toast.makeText(context, "Downloaded", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

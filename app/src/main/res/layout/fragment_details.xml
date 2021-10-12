@@ -48,6 +48,17 @@
                 tools:text="This is creator"
                 tools:visibility="visible" />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/save_image_content_description"
+                android:src="@drawable/ic_baseline_save_alt_24"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
         </LinearLayout>
 
     </ScrollView>
